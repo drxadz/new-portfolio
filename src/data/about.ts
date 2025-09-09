@@ -5,7 +5,7 @@ export const about = {
     "I enjoy building automation, crafting reproducible PoCs, and mentoring. My goal: ship findings that teams can fix quickly—and verify before release.",
   ],
   highlights: [
-    "Clients: Amazon Pay, Groww, Sibros, Cloaked, VFS Global, TCIL",
+    "Project Handled: Amazon Pay, Groww, Sibros, Cloaked, VFS Global, TCIL",
     "100+ HTB & 100+ TryHackMe labs solved",
   ],
 };

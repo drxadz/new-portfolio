@@ -28,9 +28,14 @@ export const experience = [
     period: "Sep 2022 – Jul 2024",
     location: "Kanpur, Uttar Pradesh",
     points: [
-      "Assessments for Web, Mobile, APIs, Thick Clients, OT & car infotainment systems; CAN bus testing, RE & fuzzing.",
-      "AD internal testing (Kerberoasting, AS-REP Roasting, DCSync) and attack path mapping via MITRE ATT&CK/BloodHound.",
-      "Static analysis with SonarQube/Snyk; risk-based recommendations and developer-ready fixes.",
+      "Conducted comprehensive security assessments across Web, Mobile (Android/iOS), APIs, Thick Client, OT Systems, Car Infotainment Systems, and Internal Networks, addressing diverse threat landscapes and ensuring security by design.",
+      "Delivered high-impact external red teaming engagements simulating real-world attack scenarios for government agencies, critical infrastructure (oil refineries, OT), defense manufacturers, and private enterprises.",
+      "Discovered and exploited vulnerabilities in proprietary car infotainment firmware, conducting CAN bus testing, reverse engineering, and fuzzing of in-vehicle communication protocols.",
+      "Performed Active Directory-based internal network assessments, including Kerberoasting, AS-REP Roasting, and DCSync attacks, to validate lateral movement and privilege escalation paths.",
+      "Carried out attack path analysis and kill chain development using MITRE ATT&CK and BloodHound, effectively mapping out critical security gaps and helping clients remediate.",
+      "Performed static code analysis using SonarQube and Snyk, identifying critical vulnerabilities like insecure deserialization, injection flaws, hardcoded secrets, and misconfigured authentication logic.",
+      "Generated risk-based recommendations with remediation strategies and shared custom scripts/tools to help development and IT teams reproduce and fix issues efficiently.",
+      "Documented all findings with clear proof of concept (PoC), aligning with CVSS, OWASP, and CWE standards for risk classification and reporting.",
     ],
   },
   {
@@ -39,7 +44,10 @@ export const experience = [
     period: "May 2022 – Aug 2022",
     location: "Mumbai, India",
     points: [
-      "VAPT for Web/Mobile/API & networks; weekly Nessus scans; actionable client remediation guidance."
+      "Conducted Vulnerability Assessment and Penetration Testing (VAPT) on Web, Mobile (iOS/Android), API, and network infrastructure, identifying and reporting security weaknesses across client environments.",
+      "Performed weekly automated vulnerability scans using Nessus, analyzed the results, and communicated detailed findings and remediation recommendations to clients.",
+      "Generated comprehensive technical and executive-level reports, clearly documenting risks, affected assets, CVSS scores, and actionable mitigation strategies.",
+      "Collaborated with client IT teams to guide patch management, hardening strategies, and remediation validation.",
     ],
   },
   {

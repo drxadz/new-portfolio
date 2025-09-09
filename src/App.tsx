@@ -1,5 +1,5 @@
 import { Navbar } from "./components/Navbar";
-import { Hero } from "./components/Hero";
+import { Hero3D } from "./components/Hero3D";
 import { About } from "./components/About";
 import { Experience } from "./components/Experience";
 import { Portfolio } from "./components/Portfolio";
@@ -13,7 +13,7 @@ export default function App() {
     <>
       <Navbar />
       <main>
-        <Hero />
+        <Hero3D />
         <About />
         <Experience />
         <Portfolio />

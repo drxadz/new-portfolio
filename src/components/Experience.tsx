@@ -13,6 +13,7 @@ import {
   cardRevealReduced
 } from '../lib/motion';
 import { experience, type Experience } from '../data/experience';
+import { BackgroundScene } from '../three/BackgroundScene';
 
 interface ExperienceCardProps {
   experience: Experience;
