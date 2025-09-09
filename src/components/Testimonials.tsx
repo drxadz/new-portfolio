@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInStagger, fadeUp } from '../lib/motion';
-import profileImage from '../assets/images/profile.svg';
+import profileImage from '../assets/images/profile.jpeg';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
 import tryhackmeLogo from '../assets/images/tryhackme-logo.svg';

@@ -3,7 +3,7 @@ import { fadeUp, fadeInStagger } from "../lib/motion";
 import { about } from "../data/about";
 import { skills } from "../data/skills";
 import { profile } from "../data/profile";
-import profileImage from "../assets/images/profile.svg";
+import profileImage from "../assets/images/profile.jpeg";
 
 export function About() {
   return (

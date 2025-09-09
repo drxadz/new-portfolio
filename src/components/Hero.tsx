@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { fadeInStagger, fadeUp } from "../lib/motion";
 import { profile } from "../data/profile";
 import { hero } from "../data/hero";
-import profileImage from "../assets/images/profile.svg";
+import profileImage from "../assets/images/profile.jpeg";
 
 export function Hero() {
   const scrollToSection = (href: string) => {
