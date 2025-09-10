@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 import { fadeInStagger, fadeUp } from '../lib/motion';
 import { profile } from '../data/profile';
 import { contact } from '../data/contact';
+import { EMAILJS_CONFIG, EmailTemplateParams } from '../config/emailjs';
 import profileImage from '../assets/images/profile.jpeg';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
@@ -16,7 +18,8 @@ export function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -28,18 +31,61 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+    setSubmitStatus(null);
+    setErrorMessage('');
+
+    try {
+      // Check if EmailJS is properly configured
+      if (EMAILJS_CONFIG.SERVICE_ID === 'your_service_id' || 
+          EMAILJS_CONFIG.TEMPLATE_ID === 'your_template_id' || 
+          EMAILJS_CONFIG.PUBLIC_KEY === 'your_public_key') {
+        throw new Error('EmailJS is not configured. Please set up your EmailJS credentials.');
+      }
+
+      // Prepare template parameters
+      const templateParams: EmailTemplateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_email: contact.email, // Your email address
+      };
+
+      // Send email using EmailJS
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
+      );
+
+      if (response.status === 200) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        
+        // Reset status after 5 seconds
+        setTimeout(() => {
+          setSubmitStatus(null);
+        }, 5000);
+      } else {
+        throw new Error('Failed to send email. Please try again.');
+      }
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      setSubmitStatus('error');
+      setErrorMessage(
+        error instanceof Error 
+          ? error.message 
+          : 'An unexpected error occurred. Please try again later.'
+      );
       
-      // Reset status after 3 seconds
+      // Reset error status after 5 seconds
       setTimeout(() => {
         setSubmitStatus(null);
-      }, 3000);
-    }, 2000);
+        setErrorMessage('');
+      }, 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -183,7 +229,27 @@ export function Contact() {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl"
                   >
-                    Thank you! Your message has been sent successfully. I'll get back to you soon.
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Thank you! Your message has been sent successfully. I'll get back to you soon.
+                    </div>
+                  </motion.div>
+                )}
+
+                {submitStatus === 'error' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl"
+                  >
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      {errorMessage || 'Failed to send message. Please try again.'}
+                    </div>
                   </motion.div>
                 )}
               </form>
