@@ -1,8 +1,32 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 type QuickLink = { label: string; href: string; icon?: React.ReactNode; exact?: boolean };
-type Props = { links?: QuickLink[]; hideOnSmall?: boolean };
+
+// Constants for safe positioning
+const SAFE = 12;
+const BTN = 40;
+
+function clampPos(x: number, y: number) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cx = Math.min(Math.max(x, SAFE), vw - BTN - SAFE);
+  const cy = Math.min(Math.max(y, SAFE), vh - BTN - SAFE);
+  return { x: cx, y: cy };
+}
+
+function defaultPos() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  return { x: vw - SAFE - BTN, y: vh / 2 - BTN / 2 };
+}
+
+type Props = {
+  links?: QuickLink[];
+  hideOnSmall?: boolean;
+  /** "auto" = corner on ≥768px, edge on <768px */
+  snapMode?: "auto" | "corner" | "edge";
+  perPage?: boolean;
+  cornerMargin?: number;
+};
 
 const DEFAULT_LINKS: QuickLink[] = [
   { label: "About", href: "#about" },
@@ -12,15 +36,14 @@ const DEFAULT_LINKS: QuickLink[] = [
   { label: "Contact", href: "#contact" },
 ];
 
-const LS_KEY = "quicknav-pos-v1";
-
-export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) {
+export function QuickNav({
+  links = DEFAULT_LINKS,
+  hideOnSmall = false,
+  snapMode = "auto",
+  perPage = true,
+  cornerMargin = 12,
+}: Props) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
-    // default: right-center; x,y are CSS pixels relative to viewport origin (top-left)
-    const v = localStorage.getItem(LS_KEY);
-    return v ? JSON.parse(v) : { x: 0, y: 0 }; // we compute real default later
-  });
   const [mounted, setMounted] = useState(false);
   const id = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -28,22 +51,66 @@ export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) 
   const wrapRef = useRef<HTMLDivElement>(null);
   const prefersReduced = useReducedMotion();
 
-  // Initial mount: compute default right-center if no saved pos
+  // responsive snap mode
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 768px)").matches : true
+  );
   useEffect(() => {
-    const hasSaved = !!localStorage.getItem(LS_KEY);
-    if (!hasSaved) {
-      const vw = window.innerWidth, vh = window.innerHeight;
-      // default widget size ~ 40px; offset 12px from right edge
-      setPos({ x: vw - 12 - 40, y: vh / 2 - 20 });
+    const mq = window.matchMedia("(min-width: 768px)");
+    const handler = () => setIsDesktop(mq.matches);
+    handler();
+    mq.addEventListener?.("change", handler);
+    return () => mq.removeEventListener?.("change", handler);
+  }, []);
+  const effectiveSnap: "corner" | "edge" =
+    snapMode === "auto" ? (isDesktop ? "corner" : "edge") : snapMode;
+
+  // per-page storage key
+  const lsKey = useMemo(() => {
+    const base = "quicknav-pos-v2";
+    const path = typeof window !== "undefined" ? window.location.pathname || "/" : "/";
+    return perPage ? `${base}:${path}` : base;
+  }, [perPage]);
+
+  const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(lsKey) || "null"); } catch {}
+    if (
+      !saved ||
+      typeof saved.x !== "number" ||
+      typeof saved.y !== "number" ||
+      Number.isNaN(saved.x) ||
+      Number.isNaN(saved.y)
+    ) {
+      setPos(defaultPos());
+    } else {
+      const c = clampPos(saved.x, saved.y);
+      setPos(c);
     }
     setMounted(true);
-  }, []);
+  }, [lsKey]);
 
-  // Persist pos
+  useEffect(() => { if (mounted) localStorage.setItem(lsKey, JSON.stringify(pos)); }, [pos, mounted, lsKey]);
+
+  // Add a watchdog after first paint to auto-recover if off-screen
   useEffect(() => {
     if (!mounted) return;
-    localStorage.setItem(LS_KEY, JSON.stringify(pos));
-  }, [pos, mounted]);
+    const check = () => {
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const rect = wrapRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const off =
+        rect.bottom < 0 || rect.top > vh || rect.right < 0 || rect.left > vw;
+      if (off) setPos(defaultPos());
+    };
+    // run once and on tab visibility changes
+    check();
+    const onVis = () => document.visibilityState === "visible" && check();
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [mounted]);
 
   // Close on outside click
   useEffect(() => {
@@ -67,42 +134,60 @@ export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) 
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Keep inside viewport on resize/rotation
   useEffect(() => {
-    const clampToViewport = () => {
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const x = Math.min(Math.max(pos.x, 8), vw - 48); // 48 ~ button size + margin
-      const y = Math.min(Math.max(pos.y, 8), vh - 48);
-      if (x !== pos.x || y !== pos.y) setPos({ x, y });
-    };
+    const clampToViewport = () => setPos(p => clampPos(p.x, p.y));
     window.addEventListener("resize", clampToViewport);
     window.addEventListener("orientationchange", clampToViewport);
     return () => {
       window.removeEventListener("resize", clampToViewport);
       window.removeEventListener("orientationchange", clampToViewport);
     };
-  }, [pos]);
+  }, []);
 
-  // Edge-snap on drag end
-  const onDragEnd = (_: any, info: { point: { x: number; y: number } }) => {
-    const vw = window.innerWidth, vh = window.innerHeight;
-    const btn = wrapRef.current?.getBoundingClientRect();
-    const w = btn?.width ?? 40;
-    const h = btn?.height ?? 40;
-    const rawX = info.point.x - w / 2;
-    const rawY = info.point.y - h / 2;
-    // clamp
-    let x = Math.min(Math.max(rawX, 8), vw - w - 8);
-    let y = Math.min(Math.max(rawY, 8), vh - h - 8);
-    // snap to nearest horizontal edge
-    const snapLeft = 8;
-    const snapRight = vw - w - 8;
-    x = Math.abs(x - snapLeft) < Math.abs(x - snapRight) ? snapLeft : snapRight;
-    setPos({ x, y });
-    setOpen(false); // close panel if dragging
+  const resetToDefault = () => {
+    setPos(defaultPos());
   };
 
-  // Keyboard nudge
+  const snapToEdge = (x: number, y: number) => {
+    const vw = window.innerWidth;
+    const left = SAFE;
+    const right = vw - BTN - SAFE;
+    return { x: Math.abs(x - left) < Math.abs(x - right) ? left : right, y };
+  };
+  const snapToCorner = (x: number, y: number) => {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const left = SAFE, right = vw - BTN - SAFE;
+    const top = SAFE, bottom = vh - BTN - SAFE;
+    const corners = [{x:left,y:top},{x:right,y:top},{x:left,y:bottom},{x:right,y:bottom}];
+    let best = corners[0], d = Infinity;
+    for (const c of corners) { const dd = Math.hypot(c.x - x, c.y - y); if (dd < d) { d = dd; best = c; } }
+    return best;
+  };
+
+  // Add continuous clamping during drag
+  const onDrag = (_: any, info: { point: { x: number; y: number } }) => {
+    const btn = wrapRef.current?.getBoundingClientRect();
+    const w = btn?.width ?? BTN, h = btn?.height ?? BTN;
+    let x = info.point.x - w / 2;
+    let y = info.point.y - h / 2;
+    setPos(clampPos(x, y));
+  };
+
+  // Keep your existing onDragEnd but ensure clamp BEFORE snap
+  const onDragEnd = (_: any, info: { point: { x: number; y: number } }) => {
+    const btn = wrapRef.current?.getBoundingClientRect();
+    const w = btn?.width ?? BTN, h = btn?.height ?? BTN;
+    let x = info.point.x - w / 2;
+    let y = info.point.y - h / 2;
+    const clamped = clampPos(x, y);
+    // then snap using your effectiveSnap fn (edge/corner)
+    const snapped = effectiveSnap === "edge"
+      ? snapToEdge(clamped.x, clamped.y)
+      : snapToCorner(clamped.x, clamped.y);
+    setPos(snapped);
+    setOpen(false);
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     const step = e.shiftKey ? 24 : 8;
     let { x, y } = pos;
@@ -112,34 +197,34 @@ export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) 
     if (e.key === "ArrowRight") x += step;
     if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
       e.preventDefault();
-      const vw = window.innerWidth, vh = window.innerHeight;
-      x = Math.min(Math.max(x, 8), vw - 48);
-      y = Math.min(Math.max(y, 8), vh - 48);
-      setPos({ x, y });
+      setPos(clampPos(x, y));
     }
+    if (e.key === "Enter") setOpen(v => !v);
   };
 
-  // Long-press to reset (desktop: right-click)
+  // Add keyboard hotkey: Alt+Q to reset
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey && (e.key === "q" || e.key === "Q")) {
+        setPos(defaultPos());
+        setOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   let pressTimer: number | undefined;
-  const startPress = () => {
-    pressTimer = window.setTimeout(() => {
-      const vw = window.innerWidth, vh = window.innerHeight;
-      setPos({ x: vw - 12 - 40, y: vh / 2 - 20 });
-    }, 600);
-  };
+  const startPress = () => { pressTimer = window.setTimeout(() => resetToDefault(), 600); };
   const cancelPress = () => { if (pressTimer) window.clearTimeout(pressTimer); };
 
   const panelAnim = prefersReduced
     ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
     : { initial: { opacity: 0, x: 16 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: 16 } };
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setOpen(false);
-  };
+  // Panel smart positioning: compute side/vertical flip
+  const panelSide = pos.x > window.innerWidth / 2 ? "left" : "right";
+  const panelAlignBottom = pos.y > window.innerHeight - 140; // near bottom
 
   // Nothing until mounted (avoids SSR/measure issues)
   if (!mounted) return null;
@@ -147,40 +232,31 @@ export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) 
   return (
     <motion.div
       ref={wrapRef}
-      className={[
-        "fixed z-[60] pointer-events-none",
-        hideOnSmall ? "hidden sm:block" : "",
-      ].join(" ")}
-      style={{ left: pos.x, top: pos.y }} // absolute coordinates
+      className={["fixed z-[80] pointer-events-none", hideOnSmall ? "hidden sm:block" : ""].join(" ")}
+      style={{ left: pos.x, top: pos.y }}
       drag
       dragMomentum={!prefersReduced}
+      dragElastic={0.12}
+      onDrag={onDrag}
       onDragStart={() => setOpen(false)}
       onDragEnd={onDragEnd}
-      dragElastic={0.12}
-      dragConstraints={{
-        left: 8, top: 8,
-        right: typeof window !== "undefined" ? window.innerWidth - 48 : 8,
-        bottom: typeof window !== "undefined" ? window.innerHeight - 48 : 8,
-      }}
       aria-live="polite"
     >
       {/* Toggle button */}
-      <button
-        ref={btnRef}
-        onClick={() => setOpen(v => !v)}
-        onKeyDown={onKeyDown}
-        onContextMenu={(e) => { e.preventDefault(); /* reset via right-click */ 
-          const vw = window.innerWidth, vh = window.innerHeight;
-          setPos({ x: vw - 12 - 40, y: vh / 2 - 20 });
-        }}
-        onTouchStart={startPress}
-        onTouchEnd={cancelPress}
-        onMouseDown={cancelPress}
-        aria-expanded={open}
-        aria-controls={id}
-        aria-label="Open quick links"
-        className="pointer-events-auto h-10 w-10 rounded-full border border-line bg-bg/60 backdrop-blur flex items-center justify-center shadow-[0_1px_0_0_rgba(0,0,0,0.02)] hover:shadow-soft transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-      >
+        <button
+          ref={btnRef}
+          onClick={() => setOpen(v => !v)}
+          onDoubleClick={() => { setPos(defaultPos()); setOpen(false); }}
+          onKeyDown={onKeyDown}
+          onContextMenu={(e) => { e.preventDefault(); resetToDefault(); }}
+          onTouchStart={startPress}
+          onTouchEnd={cancelPress}
+          onMouseDown={cancelPress}
+          aria-expanded={open}
+          aria-controls={id}
+          aria-label="Open quick links"
+          className="pointer-events-auto h-10 w-10 rounded-full border border-line bg-bg/60 backdrop-blur flex items-center justify-center shadow-[0_1px_0_0_rgba(0,0,0,0.02)] hover:shadow-soft transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
         <span className="sr-only">Quick links</span>
         <svg width="18" height="18" viewBox="0 0 24 24" className="text-fg/70">
           <circle cx="5" cy="12" r="2" fill="currentColor"/>
@@ -201,7 +277,12 @@ export function QuickNav({ links = DEFAULT_LINKS, hideOnSmall = false }: Props) 
             initial={panelAnim.initial}
             animate={{ ...panelAnim.animate, transition: { duration: prefersReduced ? 0 : 0.25, ease: [0.16,1,0.3,1] } }}
             exit={{ ...panelAnim.exit, transition: { duration: prefersReduced ? 0 : 0.18 } }}
-            className="pointer-events-auto mt-2 rounded-2xl border border-line bg-bg/80 backdrop-blur shadow-soft max-w-[220px] overflow-hidden"
+            className={[
+              "pointer-events-auto absolute", // absolute relative to wrapper
+              panelSide === "left" ? "right-[48px]" : "left-[48px]",
+              panelAlignBottom ? "bottom-0 mb-2" : "top-full mt-2",
+              "rounded-2xl border border-line bg-bg/80 backdrop-blur shadow-soft max-w-[220px] overflow-hidden"
+            ].join(" ")}
           >
             <nav className="py-2">
               { (links ?? []).map((l, i) => (
