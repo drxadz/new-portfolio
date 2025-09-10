@@ -6,7 +6,7 @@ import { contact } from '../data/contact';
 import profileImage from '../assets/images/profile.jpeg';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
-import tryhackmeLogo from '../assets/images/tryhackme-logo.svg';
+import tryhackmeLogo from '../assets/images/tryhackme-logo.png';
 
 export function Contact() {
   const isReducedMotion = useReducedMotion();

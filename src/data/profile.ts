@@ -4,7 +4,7 @@ export const profile = {
   badges: ["OSCP", "CPTS", "CRTP", "MCRTA", "CNSP"],
   tagline: "Penetration testing • Red teaming • Cloud & AD security",
   location: "India",
-  email: "akhileshpayyanakkal@gmail.com",
+  email: "akhileshh3kr@gmail.com",
   phone: "+91 9656559099",
   socials: [
     { label: "GitHub", href: "https://github.com/akhileshadz" },

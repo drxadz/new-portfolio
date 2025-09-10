@@ -3,7 +3,7 @@ import { fadeInStagger, fadeUp } from '../lib/motion';
 import { profile } from '../data/profile';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
-import tryhackmeLogo from '../assets/images/tryhackme-logo.svg';
+import tryhackmeLogo from '../assets/images/tryhackme-logo.png';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
