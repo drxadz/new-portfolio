@@ -23,8 +23,11 @@ export default {
         grid: "clamp(1rem, 2.5vw, 2rem)",
       },
       fontSize: {
-        hero: ["clamp(2.25rem, 6vw, 4.25rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
-        display: ["clamp(1.75rem, 3.5vw, 2.75rem)", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
+        hero: ["clamp(1.75rem, 6vw, 2.5rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        display: ["clamp(1.5rem, 4vw, 2.25rem)", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
+        "mobile-headline": ["clamp(1.25rem, 5vw, 1.75rem)", { lineHeight: "1.3" }],
+        "mobile-body": ["clamp(0.95rem, 3vw, 1.05rem)", { lineHeight: "1.5" }],
+        "mobile-small": ["clamp(0.875rem, 2.5vw, 0.95rem)", { lineHeight: "1.4" }],
       },
     },
   },

@@ -1,12 +1,12 @@
 import { Navbar } from "./components/Navbar";
 import { Hero3D } from "./components/Hero3D";
 import { About } from "./components/About";
+import { Skills } from "./components/Skills";
 import { Experience } from "./components/Experience";
-import { Portfolio } from "./components/Portfolio";
-import { Services } from "./components/Services";
 import { Certifications } from "./components/Certifications";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
+import { QuickNav } from "./components/QuickNav";
 
 export default function App() {
   return (
@@ -15,13 +15,13 @@ export default function App() {
       <main>
         <Hero3D />
         <About />
+        <Skills />
         <Experience />
-        <Portfolio />
-        <Services />
         <Certifications />
         <Contact />
       </main>
       <Footer />
+      <QuickNav />
     </>
   );
 }

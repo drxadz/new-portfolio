@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { fadeInStagger, fadeUp } from '../lib/motion';
 import { profile } from '../data/profile';
 import { contact } from '../data/contact';
@@ -7,9 +7,9 @@ import profileImage from '../assets/images/profile.jpeg';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
 import tryhackmeLogo from '../assets/images/tryhackme-logo.svg';
-import credlyLogo from '../assets/images/credly-logo.svg';
 
 export function Contact() {
+  const isReducedMotion = useReducedMotion();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -79,7 +79,7 @@ export function Contact() {
   const socialLinks = profile.socials;
 
   return (
-    <section id="contact" className="section border-t border-line">
+    <section id="contact" className="section border-t border-line bg-fg/[0.02]">
       <div className="container-page">
         <motion.div
           variants={fadeInStagger()}
@@ -161,7 +161,7 @@ export function Contact() {
 
                 <motion.button
                   variants={fadeUp}
-                  whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(255, 106, 0, 0.3)" }}
+                  whileHover={isReducedMotion ? {} : { scale: 1.02, boxShadow: "0 10px 25px rgba(255, 106, 0, 0.3)" }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSubmitting}
@@ -246,16 +246,17 @@ export function Contact() {
             {/* Social Links */}
             <motion.div variants={fadeUp}>
               <h4 className="text-lg font-semibold text-fg mb-4">Follow me</h4>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-4">
                 {socialLinks.map((social, index) => (
                   <motion.a
                     key={index}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileHover={isReducedMotion ? {} : { scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     className="w-12 h-12 bg-fg/5 rounded-xl flex items-center justify-center text-mute hover:bg-accent hover:text-white transition-all duration-300"
+                    aria-label={social.label}
                   >
                     {social.label === 'GitHub' && (
                       <img src={githubLogo} alt="GitHub" className="w-6 h-6" />
@@ -266,8 +267,15 @@ export function Contact() {
                     {social.label === 'TryHackMe' && (
                       <img src={tryhackmeLogo} alt="TryHackMe" className="w-6 h-6" />
                     )}
-                    {social.label === 'Credly' && (
-                      <img src={credlyLogo} alt="Credly" className="w-6 h-6" />
+                    {social.label === 'LinkedIn' && (
+                      <svg 
+                        className="w-6 h-6" 
+                        fill="currentColor" 
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
                     )}
                   </motion.a>
                 ))}

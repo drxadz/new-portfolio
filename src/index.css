@@ -25,3 +25,22 @@ html, body, #root {
 .section {
   @apply py-section;
 }
+
+/* Mobile-optimized spacing */
+@media (max-width: 640px) {
+  .section {
+    @apply py-12;
+  }
+}
+
+/* Mobile tap targets */
+.mobile-tap-target {
+  @apply min-h-[44px] min-w-[44px];
+}
+
+/* Mobile-optimized animations */
+@media (max-width: 768px) {
+  .mobile-reduce-animation {
+    animation-duration: 0.4s !important;
+  }
+}
