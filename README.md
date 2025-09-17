@@ -1,165 +1,185 @@
-# Personal Portfolio Website
+# Portfolio Website
 
-A modern, responsive portfolio website built with React, TailwindCSS, and Framer Motion, inspired by the Portz template design.
+A modern, responsive portfolio website built with React, Vite, and Tailwind CSS, featuring 3D animations and GitHub markdown integration.
 
-## 🚀 Features
+## Features
 
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Smooth Animations**: Beautiful animations and transitions using Framer Motion
-- **Modern UI/UX**: Clean, minimal design with professional aesthetics
-- **Interactive Components**: Hover effects, smooth scrolling, and dynamic interactions
-- **Contact Form**: Functional contact form with validation
-- **Portfolio Showcase**: Grid-based project display with filtering
-- **Testimonials Carousel**: Auto-rotating testimonials with manual navigation
-- **SEO Friendly**: Semantic HTML structure and optimized performance
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **3D Animations**: Three.js integration with React Three Fiber
+- **GitHub Integration**: Automatic markdown notes from GitHub repositories
+- **Search & Filtering**: Fuse.js powered search with URL-synced filters
+- **Performance**: Optimized animations with reduced motion support
+- **Accessibility**: Full keyboard navigation and screen reader support
 
-## 🛠️ Tech Stack
+## GitHub Markdown Integration
 
-- **React 18**: Modern React with hooks and functional components
-- **TailwindCSS**: Utility-first CSS framework for rapid styling
-- **Framer Motion**: Production-ready motion library for React
-- **Vite**: Fast build tool and development server
+This portfolio automatically fetches and displays markdown notes from the `drxadz/oscp-prep` repository.
 
-## 📁 Project Structure
+### How it works
+
+1. **Build-time indexing**: The `scripts/build-notes-index.js` script fetches all `.md` files from the GitHub repository
+2. **Static generation**: Creates `public/notes-index.json` with parsed frontmatter and content
+3. **Dynamic routing**: Each markdown file becomes a static page at `/notes/{slug}`
+4. **Auto-rebuild**: GitHub Actions automatically rebuild the site when the notes repository is updated
+
+### Setup
+
+#### 1. GitHub Token (for private repos)
+
+If your `oscp-prep` repository is private, you'll need a GitHub token:
+
+1. Go to GitHub Settings → Developer settings → Personal access tokens
+2. Generate a new token with `repo` scope
+3. Add it to your site repository secrets as `GITHUB_TOKEN`
+
+#### 2. Auto-rebuild setup
+
+**In your site repository** (this one):
+- The workflow `.github/workflows/rebuild-on-dispatch.yml` is already configured
+- It listens for `repository_dispatch` events and rebuilds the site
+
+**In your notes repository** (`drxadz/oscp-prep`):
+1. Add the workflow `.github/workflows/notify-site-on-push.yml`
+2. Set up repository secrets:
+   - `PERSONAL_ACCESS_TOKEN`: Your GitHub token with `repo` scope
+   - `SITE_REPO`: Your site repository name (e.g., `drxadz/new-portfolio`)
+
+#### 3. Local development
+
+```bash
+# Install dependencies
+npm install
+
+# Build notes index and start dev server
+npm run build
+npm run dev
+
+# Or build for production
+npm run build
+npm run preview
+```
+
+## Project Structure
 
 ```
 src/
-├── components/
-│   ├── Navbar.jsx          # Navigation bar with mobile menu
-│   ├── Hero.jsx            # Hero section with CTA buttons
-│   ├── About.jsx           # About section with skills
-│   ├── Portfolio.jsx       # Portfolio grid with filtering
-│   ├── Services.jsx        # Services cards with hover effects
-│   ├── Testimonials.jsx    # Testimonials carousel
-│   ├── Contact.jsx         # Contact form and information
-│   └── Footer.jsx          # Footer with links and social media
-├── App.jsx                 # Main application component
-├── main.jsx               # Application entry point
-└── index.css              # Global styles and TailwindCSS imports
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components (Section, Container, etc.)
+│   ├── Navbar.tsx      # Navigation with mobile drawer
+│   ├── Hero3D.tsx      # 3D hero section
+│   └── ...
+├── pages/              # Route components
+│   ├── Works.tsx       # Works listing page
+│   ├── Notes.tsx       # Notes listing page
+│   └── NoteDetail.tsx  # Individual note page
+├── data/               # Static data files
+│   └── works.json      # Sample works data
+├── lib/                # Utilities
+│   └── motion.ts       # Framer Motion variants
+└── three/              # 3D components
+    └── ...
 ```
 
-## 🎨 Design Features
+## Adding Content
 
-- **Color Palette**: Black/white/gray with accent color #0077FF
-- **Typography**: Inter font family for modern, clean appearance
-- **Spacing**: Consistent padding and margins throughout
-- **Animations**: Smooth scroll animations, hover effects, and page transitions
-- **Responsive Grid**: Adaptive layouts for different screen sizes
+### Adding Works
 
-## 🚀 Getting Started
+Edit `src/data/works.json` to add new work entries:
 
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm or yarn package manager
-
-### Installation
-
-1. **Clone or download the project**
-   ```bash
-   cd portfolio
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173` to view the website
-
-### Build for Production
-
-```bash
-npm run build
+```json
+{
+  "id": "works-001",
+  "title": "Project Title",
+  "type": "case-study",
+  "topics": ["topic1", "topic2"],
+  "category": "Category Name",
+  "tags": ["tag1", "tag2"],
+  "date": "2024-01-01",
+  "summary": "Brief description",
+  "contentLink": "/works/works-001",
+  "readingTime": "5 min",
+  "popularity": 100
+}
 ```
 
-The built files will be in the `dist` directory, ready for deployment.
+### Adding Notes
 
-## 🎯 Customization
+Notes are automatically pulled from your GitHub repository. To add a new note:
 
-### Personal Information
+1. Create a `.md` file in your `oscp-prep` repository
+2. Add frontmatter at the top:
 
-Update the following files with your personal information:
-
-1. **Navbar.jsx**: Change "Your Name" to your actual name
-2. **Hero.jsx**: Update headline, subtitle, and CTA text
-3. **About.jsx**: Replace bio text and skills with your information
-4. **Portfolio.jsx**: Add your actual projects and update project data
-5. **Services.jsx**: Modify services to match your offerings
-6. **Testimonials.jsx**: Replace with real client testimonials
-7. **Contact.jsx**: Update contact information and social links
-8. **Footer.jsx**: Update social media links and contact details
-
-### Images
-
-Replace placeholder images with your own:
-
-- Profile photos in Hero and About sections
-- Project images in Portfolio section
-- Any other visual assets
-
-### Colors and Styling
-
-- Modify the accent color in `tailwind.config.js`
-- Update color schemes in individual components
-- Customize fonts by changing the Google Fonts import in `index.css`
-
-### Content
-
-- Update all placeholder text with your actual content
-- Modify project descriptions and technologies
-- Replace testimonials with real client feedback
-- Update service descriptions to match your offerings
-
-## 📱 Responsive Breakpoints
-
-- **Mobile**: < 768px (single column layout)
-- **Tablet**: 768px - 1024px (2-column grids)
-- **Desktop**: > 1024px (3-column grids and full layouts)
-
-## 🎭 Animation Features
-
-- **Page Load**: Fade-in animations for all sections
-- **Scroll Animations**: Elements animate into view as you scroll
-- **Hover Effects**: Interactive hover states on buttons and cards
-- **Smooth Scrolling**: Smooth navigation between sections
-- **Carousel**: Auto-rotating testimonials with manual controls
-
-## 🚀 Deployment
-
-### Netlify
-1. Build the project: `npm run build`
-2. Drag and drop the `dist` folder to Netlify
-3. Configure custom domain if needed
-
-### Vercel
-1. Connect your GitHub repository to Vercel
-2. Vercel will automatically deploy on every push
-3. Configure environment variables if needed
-
-### GitHub Pages
-1. Install gh-pages: `npm install --save-dev gh-pages`
-2. Add deploy script to package.json
-3. Run: `npm run deploy`
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🤝 Contributing
-
-Feel free to fork this project and submit pull requests for any improvements.
-
-## 📞 Support
-
-If you have any questions or need help customizing the portfolio, feel free to reach out!
-
+```markdown
+---
+title: "Note Title"
+tags: ["tag1", "tag2"]
+date: "2024-01-01"
+excerpt: "Brief description"
 ---
 
-**Happy coding! 🎉**# new-portfolio
+# Your content here
+```
+
+3. Push to the `main` branch
+4. The site will automatically rebuild and include your new note
+
+## Search Configuration
+
+The search uses Fuse.js with the following configuration:
+
+- **Keys**: `title` (60%), `excerpt` (25%), `tags` (10%), `category` (5%)
+- **Threshold**: 0.35 (fuzzy matching)
+- **Features**: Ignores location, includes match highlighting
+
+## Deployment
+
+### Vercel
+
+1. Connect your repository to Vercel
+2. Set environment variables:
+   - `GITHUB_TOKEN` (if using private repo)
+3. Deploy
+
+### Netlify
+
+1. Connect your repository to Netlify
+2. Set environment variables:
+   - `GITHUB_TOKEN` (if using private repo)
+3. Build command: `npm run build`
+4. Publish directory: `dist`
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Lint code
+npm run lint
+```
+
+## Technologies Used
+
+- **React 19** - UI framework
+- **Vite** - Build tool and dev server
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Framer Motion** - Animations
+- **Three.js** - 3D graphics
+- **React Three Fiber** - React Three.js integration
+- **Fuse.js** - Fuzzy search
+- **React Markdown** - Markdown rendering
+- **Gray Matter** - Frontmatter parsing
+
+## License
+
+MIT License - see LICENSE file for details.

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 import { profile } from "../data/profile";
 
 const links = [
@@ -13,6 +14,7 @@ const links = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   // Handle scroll for sticky header height
   useEffect(() => {
@@ -85,6 +87,22 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
+            <motion.button
+              onClick={() => navigate('/works')}
+              className="text-sm text-mute hover:text-fg transition-colors duration-300"
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Works
+            </motion.button>
+            <motion.button
+              onClick={() => navigate('/notes')}
+              className="text-sm text-mute hover:text-fg transition-colors duration-300"
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Notes
+            </motion.button>
             {links.map(l => (
               <motion.button
                 key={l.href}
@@ -124,7 +142,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Full-Screen Mobile Menu */}
+      {/* Slide-in Mobile Drawer */}
       <AnimatePresence>
         {open && (
           <>
@@ -138,13 +156,15 @@ export function Navbar() {
               onClick={() => setOpen(false)}
             />
             
-            {/* Menu Content */}
-            <motion.div
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="fixed inset-0 z-50 md:hidden bg-bg"
+            {/* Drawer Content */}
+            <motion.aside
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[90vw] z-50 md:hidden bg-bg border-l border-line shadow-2xl"
+              role="dialog"
+              aria-modal="true"
             >
               <div className="h-full flex flex-col">
                 {/* Header */}
@@ -152,34 +172,48 @@ export function Navbar() {
                   <span className="font-semibold text-lg">{profile.name}</span>
                   <motion.button
                     onClick={() => setOpen(false)}
-                    className="w-12 h-12 rounded-xl border border-line bg-bg/50 hover:bg-accent/10 hover:border-accent/30 transition-all duration-300 flex items-center justify-center"
+                    className="w-10 h-10 rounded-xl border border-line bg-bg/50 hover:bg-accent/10 hover:border-accent/30 transition-all duration-300 flex items-center justify-center"
                     whileTap={{ scale: 0.95 }}
+                    aria-label="Close menu"
                   >
                     <span className="text-xl">×</span>
                   </motion.button>
                 </div>
 
                 {/* Navigation Links */}
-                <nav className="flex-1 flex flex-col justify-center px-6 py-12">
+                <nav className="flex-1 overflow-y-auto px-4 py-6">
                   <div className="space-y-2">
-                    {links.map((l, index) => (
+                    <motion.button
+                      key={'works'}
+                      onClick={() => { navigate('/works'); setOpen(false); }}
+                      className="w-full text-left py-3 px-4 rounded-xl text-base font-medium text-fg hover:bg-accent/10 hover:text-accent transition-all duration-300 min-h-[44px] flex items-center"
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Works
+                    </motion.button>
+                    <motion.button
+                      key={'notes'}
+                      onClick={() => { navigate('/notes'); setOpen(false); }}
+                      className="w-full text-left py-3 px-4 rounded-xl text-base font-medium text-fg hover:bg-accent/10 hover:text-accent transition-all duration-300 min-h-[44px] flex items-center"
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Notes
+                    </motion.button>
+                    {links.map((l) => (
                       <motion.button
                         key={l.href}
-                        variants={mobileLinkVariants}
                         onClick={() => scrollToSection(l.href)}
-                        className="w-full text-left py-4 px-6 rounded-xl text-lg font-medium text-fg hover:bg-accent/10 hover:text-accent transition-all duration-300 min-h-[44px] flex items-center"
+                        className="w-full text-left py-3 px-4 rounded-xl text-base font-medium text-fg hover:bg-accent/10 hover:text-accent transition-all duration-300 min-h-[44px] flex items-center"
                         whileTap={{ scale: 0.98 }}
                       >
                         {l.label}
                       </motion.button>
                     ))}
                   </div>
-                  
-                  {/* Contact CTA */}
+
                   <motion.button
-                    variants={mobileLinkVariants}
                     onClick={() => scrollToSection('#contact')}
-                    className="w-full mt-8 py-4 px-6 rounded-xl bg-accent text-white text-lg font-medium hover:bg-accent/90 transition-all duration-300 min-h-[44px] flex items-center justify-center"
+                    className="w-full mt-6 py-3 px-4 rounded-xl bg-accent text-white text-base font-medium hover:bg-accent/90 transition-all duration-300 min-h-[44px] flex items-center justify-center"
                     whileTap={{ scale: 0.98 }}
                   >
                     Get In Touch
@@ -187,13 +221,11 @@ export function Navbar() {
                 </nav>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-line">
-                  <p className="text-sm text-mute text-center">
-                    {profile.role} • {profile.location}
-                  </p>
+                <div className="p-6 border-t border-line text-center text-sm text-mute">
+                  {profile.role} • {profile.location}
                 </div>
               </div>
-            </motion.div>
+            </motion.aside>
           </>
         )}
       </AnimatePresence>

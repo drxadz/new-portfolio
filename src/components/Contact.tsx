@@ -9,6 +9,8 @@ import profileImage from '../assets/images/profile.jpeg';
 import githubLogo from '../assets/images/github-logo.svg';
 import htbLogo from '../assets/images/htb-logo.jpeg';
 import tryhackmeLogo from '../assets/images/tryhackme-logo.png';
+import { Section } from './ui/Section';
+import { Container } from './ui/Container';
 
 export function Contact() {
   const isReducedMotion = useReducedMotion();
@@ -125,8 +127,8 @@ export function Contact() {
   const socialLinks = profile.socials;
 
   return (
-    <section id="contact" className="section border-t border-line bg-fg/[0.02]">
-      <div className="container-page">
+    <Section id="contact" background="subtle">
+      <Container>
         <motion.div
           variants={fadeInStagger()}
           initial="hidden"
@@ -349,7 +351,7 @@ export function Contact() {
             </motion.div>
           </motion.div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

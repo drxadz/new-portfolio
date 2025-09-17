@@ -48,21 +48,21 @@ export function Hero3D({
           >
             <motion.h1 
               variants={fadeUp} 
-              className="text-hero font-bold leading-tight text-center md:text-left"
+              className="font-bold leading-tight text-center md:text-left text-3xl md:text-4xl lg:text-6xl"
             >
               {title || profile.name}
             </motion.h1>
             
             <motion.p 
               variants={fadeUp} 
-              className="mt-3 text-display text-mute font-medium text-center md:text-left"
+              className="mt-3 text-mute font-medium text-center md:text-left text-base md:text-lg lg:text-2xl"
             >
               {subtitle || profile.role}
             </motion.p>
             
             <motion.p 
               variants={fadeUp} 
-              className="mt-4 max-w-2xl text-mobile-body text-fg/80 leading-relaxed text-center md:text-left mx-auto md:mx-0"
+              className="mt-4 max-w-2xl text-fg/80 leading-relaxed text-center md:text-left mx-auto md:mx-0 text-sm md:text-base"
             >
               {hero.subhead}
             </motion.p>
@@ -137,7 +137,7 @@ export function Hero3D({
             transition={{ delay: 0.2 }}
             className="md:col-span-5 order-1 md:order-2"
           >
-            <div className="aspect-[4/3] md:aspect-square max-w-sm mx-auto md:max-w-none">
+            <div className="w-full max-w-sm mx-auto md:max-w-none aspect-[16/10] sm:aspect-[4/3] md:aspect-square lg:aspect-[5/4]">
               <PerformanceGuard
                 model={model}
                 accent={accent}

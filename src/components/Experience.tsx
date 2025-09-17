@@ -84,7 +84,7 @@ export function Experience() {
           </motion.p>
         </motion.div>
 
-        {/* Mobile: Single Column Layout */}
+        {/* Mobile/Tablet: Single Column Layout */}
         <div className="lg:hidden">
           <motion.div
             ref={timelineRef}
@@ -113,7 +113,7 @@ export function Experience() {
         </div>
 
         {/* Desktop: Two Column Layout */}
-        <div className="hidden lg:grid grid-cols-12 gap-8 lg:gap-12">
+        <div className="hidden lg:grid grid-cols-12 gap-6 xl:gap-12">
           {/* Left Column - Timeline */}
           <motion.div
             variants={fadeInStagger()}

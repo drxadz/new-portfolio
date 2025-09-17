@@ -3,6 +3,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { fadeUp, fadeInStagger } from '../lib/motion';
 import { certifications, certificationCategories, type Certification } from '../data/certifications';
 import { CertificationCard } from './CertificationCard';
+import { Section } from './ui/Section';
+import { Container } from './ui/Container';
 
 interface CertificationsProps {
   title?: string;
@@ -27,8 +29,8 @@ export function Certifications({
   };
 
   return (
-    <section id="certifications" className="section border-t border-line bg-fg/[0.02]">
-      <div className="container-page">
+    <Section id="certifications" background="subtle">
+      <Container>
         {/* Header */}
         <motion.div
           variants={fadeInStagger()}
@@ -76,13 +78,13 @@ export function Certifications({
           ))}
         </motion.div>
 
-        {/* Certifications Grid */}
+        {/* Certifications Grid: 1 / 2 / 3 columns with stagger */}
         <motion.div
           variants={fadeInStagger(0.06)}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {filteredCertifications.map((certification, index) => (
             <CertificationCard
@@ -113,7 +115,8 @@ export function Certifications({
           </motion.div>
         )}
 
-        {/* Stats Section */}
+        {/* Stats Section */
+        }
         <motion.div
           variants={fadeInStagger()}
           initial="hidden"
@@ -151,7 +154,7 @@ export function Certifications({
             ))}
           </motion.div>
         </motion.div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

@@ -56,12 +56,4 @@ export const experience = [
     period: "Jun 2021 – Aug 2021",
     points: ["Hands-on exposure analyzing real cyber incidents in India."],
   },
-  {
-    company: "Freelance & Bug Bounty",
-    role: "Security Researcher",
-    period: "Mar 2020 – Present",
-    points: [
-      "Freelance pentesting for private orgs; responsible disclosures on HackerOne, Huntr, NCIIPC."
-    ],
-  },
 ];

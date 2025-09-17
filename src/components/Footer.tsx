@@ -28,23 +28,20 @@ export function Footer() {
 
   return (
     <footer className="bg-fg text-white border-t border-line">
-      <div className="container-page py-16">
+      <div className="container-page py-12 md:py-16">
         <motion.div
           variants={fadeInStagger()}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {/* Brand Section */}
           <motion.div variants={fadeUp} className="lg:col-span-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="text-2xl font-bold mb-4"
-            >
+            <motion.div whileHover={{ scale: 1.05 }} className="text-2xl md:text-3xl font-bold mb-4">
               {profile.name}
             </motion.div>
-            <p className="text-gray-300 mb-6 max-w-md leading-relaxed">
+            <p className="text-gray-300 mb-6 max-w-md leading-relaxed text-sm md:text-base">
               {profile.summary}
             </p>
             <div className="flex space-x-4">

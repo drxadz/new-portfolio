@@ -4,11 +4,14 @@ import { about } from "../data/about";
 import { skills } from "../data/skills";
 import { profile } from "../data/profile";
 import profileImage from "../assets/images/profile.jpeg";
+import { Section } from './ui/Section';
+import { Container } from './ui/Container';
 
 export function About() {
   return (
-    <section id="about" className="section border-t border-line">
-      <div className="container-page grid gap-grid md:grid-cols-12 items-start">
+    <Section id="about" background="default">
+      <Container>
+        <div className="grid gap-8 md:gap-10 md:grid-cols-12 items-start">
         <motion.div
           variants={fadeInStagger()}
           initial="hidden"
@@ -16,7 +19,7 @@ export function About() {
           viewport={{ once: true, margin: "-100px" }}
           className="md:col-span-5"
         >
-          <motion.h2 variants={fadeUp} className="text-display font-semibold">
+          <motion.h2 variants={fadeUp} className="text-2xl md:text-4xl lg:text-5xl font-semibold">
             {about.title}
           </motion.h2>
           
@@ -38,7 +41,7 @@ export function About() {
             </motion.div>
           </motion.div>
           
-          <motion.div variants={fadeUp} className="space-y-4 text-fg/80">
+          <motion.div variants={fadeUp} className="space-y-4 text-fg/80 text-sm md:text-base">
             {about.body.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
@@ -98,7 +101,8 @@ export function About() {
             </div>
           </div>
         </motion.div>
-      </div>
-    </section>
+        </div>
+      </Container>
+    </Section>
   );
 }

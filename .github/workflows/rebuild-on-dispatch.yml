@@ -1,0 +1,36 @@
+name: Rebuild on Repository Dispatch
+
+on:
+  repository_dispatch:
+    types: [rebuild-site]
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build notes index and site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run build
+        
+      - name: Deploy to Vercel (if configured)
+        if: success()
+        run: |
+          echo "Build completed successfully"
+          echo "Deploy to your hosting platform of choice"
+          # Add your deployment commands here
+          # For Vercel: vercel --prod
+          # For Netlify: netlify deploy --prod --dir=dist

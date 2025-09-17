@@ -88,7 +88,7 @@ export function Skills() {
           showUnderline
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
           <SkillGroup
             title="Core Competencies"
             skills={skills.core}

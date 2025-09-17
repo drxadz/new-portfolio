@@ -1,0 +1,58 @@
+[
+  {
+    "id": "works-001",
+    "title": "Red Team Assessment — Acme Corp",
+    "type": "case-study",
+    "topics": ["red-team", "ad-compromise"],
+    "category": "Red Team Assessment",
+    "tags": ["AD", "Kerberos", "pivoting"],
+    "date": "2024-11-15",
+    "summary": "Performed internal/external red team exercise focusing on AD pivoting and data exfil.",
+    "contentLink": "/works/works-001",
+    "thumbnail": null,
+    "readingTime": "7 min",
+    "popularity": 128
+  },
+  {
+    "id": "works-002",
+    "title": "HTB Writeup — Cascade",
+    "type": "writeup",
+    "topics": ["htb", "windows"],
+    "category": "HTB Writes",
+    "tags": ["LDAP", "AD", "privesc"],
+    "date": "2024-08-02",
+    "summary": "Walkthrough focusing on LDAP misconfig, password reuse and AD escalation.",
+    "contentLink": "https://example.com/htb/cascade",
+    "thumbnail": null,
+    "readingTime": "10 min",
+    "popularity": 92
+  },
+  {
+    "id": "works-003",
+    "title": "OSCP Notes — Web Exploitation Cheatsheet",
+    "type": "notes",
+    "topics": ["oscp", "web"],
+    "category": "OSCP Notes",
+    "tags": ["SQLi", "XSS", "Auth"],
+    "date": "2023-12-20",
+    "summary": "Concise exploitation notes for common OSCP-style web vulns and payloads.",
+    "contentLink": "/notes/oscp-web",
+    "thumbnail": null,
+    "readingTime": "5 min",
+    "popularity": 150
+  },
+  {
+    "id": "works-004",
+    "title": "AD Lab — Kerberoasting to DA",
+    "type": "lab",
+    "topics": ["ad", "kerberoast"],
+    "category": "More",
+    "tags": ["Kerberos", "AS-REP", "hashcat"],
+    "date": "2025-02-10",
+    "summary": "Lab chain from kerberoast to DCSync with detection notes and mitigations.",
+    "contentLink": "/labs/ad-kerberoast",
+    "thumbnail": null,
+    "readingTime": "8 min",
+    "popularity": 75
+  }
+]

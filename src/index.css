@@ -17,9 +17,96 @@ html, body, #root {
   color: var(--fg);
 }
 
+/* Prevent horizontal scrolling on narrow viewports */
+body {
+  overflow-x: hidden;
+}
+
 /* Reusable utility-like classes */
 .container-page {
-  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  @apply mx-auto w-full max-w-screen-xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Prose styles for markdown content */
+.prose {
+  @apply text-fg leading-relaxed;
+  color: rgba(var(--fg-rgb), 0.8);
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  @apply text-fg font-semibold mt-8 mb-4;
+}
+
+.prose h1 {
+  @apply text-3xl;
+}
+
+.prose h2 {
+  @apply text-2xl;
+}
+
+.prose h3 {
+  @apply text-xl;
+}
+
+.prose p {
+  @apply mb-4;
+}
+
+.prose ul, .prose ol {
+  @apply mb-4 pl-6;
+}
+
+.prose li {
+  @apply mb-2;
+}
+
+.prose blockquote {
+  @apply border-l-4 pl-4 italic my-6;
+  border-left-color: rgba(var(--fg-rgb), 0.2);
+}
+
+.prose code {
+  @apply px-1 py-0.5 rounded text-sm font-mono;
+  background-color: rgba(var(--fg-rgb), 0.1);
+}
+
+.prose pre {
+  @apply border border-line rounded-lg p-4 overflow-x-auto my-6;
+  background-color: rgba(var(--fg-rgb), 0.05);
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+}
+
+.prose table {
+  @apply w-full border-collapse my-6;
+}
+
+.prose th, .prose td {
+  @apply border border-line px-4 py-2 text-left;
+}
+
+.prose th {
+  @apply font-semibold;
+  background-color: rgba(var(--fg-rgb), 0.05);
+}
+
+.prose a {
+  @apply text-fg underline transition-colors;
+}
+
+.prose a:hover {
+  color: rgba(var(--fg-rgb), 0.7);
+}
+
+.prose img {
+  @apply rounded-lg my-6;
+}
+
+.prose hr {
+  @apply border-line my-8;
 }
 
 .section {
